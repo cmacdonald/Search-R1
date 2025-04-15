@@ -4,7 +4,9 @@ import random
 from datasets import load_dataset
 import requests
 
-question = "Mike Barnett negotiated many contracts including which player that went on to become general manager of CSKA Moscow of the Kontinental Hockey League?"
+import sys
+question = sys.argv[1]
+#question = "Mike Barnett negotiated many contracts including which player that went on to become general manager of CSKA Moscow of the Kontinental Hockey League?"
 
 # Model ID and device setup
 model_id = "PeterJinGo/SearchR1-nq_hotpotqa_train-qwen2.5-7b-em-ppo"
@@ -69,8 +71,8 @@ def search(query: str):
     def _passages2string(retrieval_result):
         format_reference = ''
         for idx, doc_item in enumerate(retrieval_result.itertuples()):
-            content = doc_item['text']
-            title = doc_item['title']
+            content = doc_item.text
+            title = doc_item.title
             format_reference += f"Doc {idx+1}(Title: {title}) {content}\n"
         return format_reference
 
@@ -115,7 +117,7 @@ while True:
     
     tmp_query = get_query(tokenizer.decode(outputs[0], skip_special_tokens=True))
     if tmp_query:
-        # print(f'searching "{tmp_query}"...')
+        print(f'searching "{tmp_query}"...')
         search_results = search(tmp_query)
     else:
         search_results = ''
